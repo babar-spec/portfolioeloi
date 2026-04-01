@@ -1,45 +1,918 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio d'Eloi</title>
-    <link rel="stylesheet" href="styles.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eloi Domain — Portfolio MT2E</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --c-bg: #f8f7f4;
+    --c-surface: #ffffff;
+    --c-ink: #1a1916;
+    --c-muted: #8a8780;
+    --c-accent: #2d4a3e;
+    --c-accent-light: #e8ede9;
+    --c-border: rgba(26,25,22,0.1);
+    --c-border-strong: rgba(26,25,22,0.2);
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-mono: 'DM Mono', monospace;
+    --nav-h: 64px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--c-bg);
+    color: var(--c-ink);
+    font-family: var(--font-serif);
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body.panel-open { overflow: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--nav-h);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 4vw;
+    background: rgba(248,247,244,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .nav-logo {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+
+  .nav-links a {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 300;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--c-ink); }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-rows: 1fr auto;
+    padding-top: var(--nav-h);
+  }
+
+  .hero-main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 6vw 4vw 4vw;
+    max-width: 1100px;
+  }
+
+  .hero-tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.1s forwards;
+  }
+
+  .hero-name {
+    font-size: clamp(4rem, 10vw, 9rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.25s forwards;
+  }
+
+  .hero-name em { font-style: italic; color: var(--c-accent); }
+
+  .hero-desc {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--c-muted);
+    max-width: 520px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 4vw;
+    border-top: 1px solid var(--c-border);
+    opacity: 0;
+    animation: fadeUp 0.8s 0.55s forwards;
+  }
+
+  .hero-bar-left {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .scroll-hint {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: var(--c-muted);
+    position: relative; overflow: hidden;
+  }
+
+  .scroll-line::after {
+    content: '';
+    position: absolute; top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: var(--c-accent);
+    animation: slide 2s 1s infinite;
+  }
+
+  /* SECTIONS */
+  section { padding: 8rem 4vw; }
+
+  .section-header {
+    display: flex; align-items: baseline; gap: 1.5rem;
+    margin-bottom: 5rem;
+  }
+
+  .section-num {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    color: var(--c-muted);
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .section-title em { font-style: italic; color: var(--c-accent); }
+
+  .divider { flex: 1; height: 1px; background: var(--c-border); margin-left: 2rem; }
+
+  /* À PROPOS */
+  #about { background: var(--c-surface); }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 6rem;
+    align-items: start;
+    max-width: 1100px;
+  }
+
+  .about-portrait {
+    aspect-ratio: 3/4;
+    background: var(--c-accent-light);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .portrait-placeholder {
+    font-size: 5rem;
+    font-family: var(--font-serif);
+    font-weight: 300;
+    color: var(--c-accent);
+    opacity: 0.4;
+    letter-spacing: -0.05em;
+  }
+
+  .portrait-label {
+    position: absolute; bottom: 1.5rem; left: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+    opacity: 0.7;
+  }
+
+  .about-text p {
+    font-size: 1.05rem;
+    font-weight: 300;
+    line-height: 1.8;
+    color: var(--c-ink);
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text p:last-of-type { margin-bottom: 2.5rem; }
+
+  .about-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    border-top: 1px solid var(--c-border);
+    padding-top: 2rem;
+  }
+
+  .detail-item label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .detail-item span { font-size: 0.95rem; font-weight: 300; color: var(--c-ink); }
+
+  /* PROJETS */
+  #projects { background: var(--c-bg); }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2px;
+    max-width: 1200px;
+  }
+
+  .project-card {
+    background: var(--c-surface);
+    padding: 2.5rem;
+    cursor: pointer;
+    transition: background 0.25s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0;
+    width: 3px; height: 0%;
+    background: var(--c-accent);
+    transition: height 0.35s ease;
+  }
+
+  .project-card:hover { background: var(--c-accent-light); }
+  .project-card:hover::before { height: 100%; }
+
+  .project-num {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--c-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .project-title {
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .project-desc {
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--c-muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+  }
+
+  .project-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--c-border-strong);
+    color: var(--c-muted);
+  }
+
+  .project-arrow {
+    position: absolute; bottom: 2.5rem; right: 2.5rem;
+    font-size: 1.5rem;
+    color: var(--c-accent);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.25s, transform 0.25s;
+  }
+
+  .project-card:hover .project-arrow { opacity: 1; transform: translateX(0); }
+
+  /* ===== PANNEAU DETAIL ===== */
+  .panel-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(26,25,22,0);
+    pointer-events: none;
+    transition: background 0.4s ease;
+  }
+
+  .panel-overlay.active {
+    background: rgba(26,25,22,0.45);
+    pointer-events: all;
+  }
+
+  .panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 201;
+    width: min(660px, 100vw);
+    background: var(--c-surface);
+    transform: translateX(100%);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .panel.active { transform: translateX(0); }
+
+  .panel-header {
+    position: sticky; top: 0;
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 10;
+  }
+
+  .panel-close {
+    width: 36px; height: 36px;
+    border: 1px solid var(--c-border-strong);
+    background: transparent;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    color: var(--c-muted);
+    transition: color 0.2s, border-color 0.2s;
+    font-family: var(--font-mono);
+  }
+
+  .panel-close:hover { color: var(--c-ink); border-color: var(--c-ink); }
+
+  .panel-num {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    color: var(--c-muted);
+  }
+
+  .panel-body { padding: 3rem 2.5rem; flex: 1; }
+
+  .panel-title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  .panel-title em { font-style: italic; color: var(--c-accent); }
+
+  .panel-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.5rem; }
+
+  .panel-section-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.75rem;
+    margin-top: 2.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--c-border);
+  }
+
+  .panel-text {
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.85;
+    color: var(--c-ink);
+  }
+
+  .panel-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .panel-meta-item label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+    margin-bottom: 0.3rem;
+  }
+
+  .panel-meta-item span { font-size: 0.95rem; font-weight: 300; }
+
+  .panel-result-box {
+    background: var(--c-accent-light);
+    border-left: 3px solid var(--c-accent);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .panel-result-box p {
+    font-size: 0.95rem;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--c-accent);
+  }
+
+  /* COMPÉTENCES */
+  #skills { background: var(--c-accent); }
+  #skills .section-title { color: var(--c-accent-light); }
+  #skills .section-title em { color: rgba(255,255,255,0.6); }
+  #skills .section-num { color: rgba(232,237,233,0.5); }
+  #skills .divider { background: rgba(232,237,233,0.2); }
+
+  .skills-layout { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; max-width: 1000px; }
+
+  .skill-group { background: rgba(255,255,255,0.06); padding: 2.5rem; }
+
+  .skill-group-title {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(232,237,233,0.55);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(232,237,233,0.15);
+  }
+
+  .skill-list { list-style: none; }
+
+  .skill-item { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+
+  .skill-name { font-size: 0.95rem; font-weight: 300; color: rgba(232,237,233,0.9); }
+
+  .skill-dots { display: flex; gap: 4px; }
+
+  .dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(232,237,233,0.2); }
+  .dot.filled { background: rgba(232,237,233,0.8); }
+
+  /* CONTACT */
+  #contact { background: var(--c-surface); }
+
+  .contact-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; max-width: 1000px; align-items: start; }
+
+  .contact-intro { font-size: 1.05rem; font-weight: 300; color: var(--c-muted); line-height: 1.8; margin-bottom: 3rem; }
+
+  .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+
+  .contact-link {
+    display: flex; align-items: center; gap: 1.5rem;
+    text-decoration: none; color: var(--c-ink);
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--c-border);
+    transition: gap 0.25s;
+  }
+
+  .contact-link:hover { gap: 2rem; }
+
+  .link-icon {
+    width: 36px; height: 36px;
+    border: 1px solid var(--c-border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 0.65rem;
+    color: var(--c-muted); flex-shrink: 0; letter-spacing: 0.05em;
+  }
+
+  .link-text { font-size: 0.95rem; font-weight: 300; }
+  .link-sub { font-size: 0.75rem; color: var(--c-muted); font-family: var(--font-mono); }
+
+  .contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .form-label { font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--c-muted); }
+
+  .form-input {
+    background: transparent; border: none;
+    border-bottom: 1px solid var(--c-border-strong);
+    padding: 0.75rem 0;
+    font-family: var(--font-serif); font-size: 0.95rem; font-weight: 300;
+    color: var(--c-ink); outline: none; transition: border-color 0.2s; width: 100%;
+  }
+
+  .form-input:focus { border-color: var(--c-accent); }
+  textarea.form-input { resize: vertical; min-height: 120px; }
+
+  .btn-send {
+    align-self: flex-start;
+    background: var(--c-accent); color: rgba(232,237,233,0.9);
+    border: none; padding: 1rem 2.5rem;
+    font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    cursor: pointer; transition: opacity 0.2s; margin-top: 0.5rem;
+  }
+
+  .btn-send:hover { opacity: 0.85; }
+
+  /* FOOTER */
+  footer {
+    padding: 2rem 4vw; border-top: 1px solid var(--c-border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+
+  .footer-left, .footer-right { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; color: var(--c-muted); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes slide { from { left: -100%; } to { left: 100%; } }
+
+  .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.hidden { opacity: 0; transform: translateY(24px); }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--c-accent); color: rgba(232,237,233,0.9);
+    padding: 1rem 1.75rem; font-family: var(--font-mono); font-size: 0.72rem;
+    letter-spacing: 0.1em; opacity: 0; transform: translateY(12px);
+    transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 300;
+  }
+
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .about-portrait { aspect-ratio: 1/1; }
+    .skills-layout { grid-template-columns: 1fr; }
+    .contact-layout { grid-template-columns: 1fr; gap: 3rem; }
+    .hero-bar { flex-direction: column; gap: 1rem; align-items: flex-start; }
+    .panel-body { padding: 2rem 1.5rem; }
+    .panel-header { padding: 1.25rem 1.5rem; }
+    .panel-meta-grid { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#about">1. À propos</a></li>
-                <li><a href="#passions">2. Passions</a></li>
-                <li><a href="#projects">3. Projets</a></li>
-                <li><a href="#contact">4. Contact</a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <section id="about">
-        <h2>1. À propos</h2>
-        <p>Bienvenue sur mon portfolio. Je m'appelle Eloi et je suis développeur web.</p>
-    </section>
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">Eloi Domain.</a>
+  <ul class="nav-links">
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#skills">Compétences</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
 
-    <section id="passions">
-        <h2>2. Passions</h2>
-        <p>J'ai une grande passion pour la technologie, le développement durable et les voyages. J'aime passer mon temps libre à explorer de nouvelles cultures et à apprendre de nouvelles compétences techniques.</p>
-    </section>
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-main">
+    <p class="hero-tag">Étudiant BUT MT2E · IUT</p>
+    <h1 class="hero-name">Eloi<br><em>Domain</em></h1>
+    <p class="hero-desc">Étudiant en Métiers de la Transition et de l'Efficacité Énergétiques — curieux, rigoureux, engagé dans les enjeux de l'énergie et du bâtiment durable.</p>
+  </div>
+  <div class="hero-bar">
+    <span class="hero-bar-left">Disponible pour alternance · France</span>
+    <span class="scroll-hint"><span class="scroll-line"></span>Découvrir</span>
+  </div>
+</section>
 
-    <section id="projects">
-        <h2>3. Projets</h2>
-        <p>Découvrez mes projets récents ici.</p>
-    </section>
+<!-- À PROPOS -->
+<section id="about">
+  <div class="section-header reveal">
+    <span class="section-num">01</span>
+    <h2 class="section-title">À <em>propos</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-portrait reveal">
+      <span class="portrait-placeholder">E.</span>
+      <span class="portrait-label">Photo · à venir</span>
+    </div>
+    <div class="about-text reveal" style="transition-delay:0.15s">
+      <p>Je m'appelle Eloi Domain, étudiant en BUT Métiers de la Transition et de l'Efficacité Énergétiques. Passionné par les questions environnementales et les enjeux du bâtiment de demain, je me forme aux techniques qui permettront de réduire notre empreinte énergétique.</p>
+      <p>Mon parcours m'a permis de développer des compétences en thermique du bâtiment, en audit énergétique et en gestion de projets liés aux énergies renouvelables. Je cherche à allier expertise technique et sens des responsabilités environnementales.</p>
+      <p>Curieux et rigoureux, j'aime analyser, comprendre et proposer des solutions concrètes face aux défis de la transition énergétique.</p>
+      <div class="about-details">
+        <div class="detail-item"><label>Formation</label><span>BUT MT2E</span></div>
+        <div class="detail-item"><label>Localisation</label><span>France</span></div>
+        <div class="detail-item"><label>Statut</label><span>Étudiant — 2ᵉ année</span></div>
+        <div class="detail-item"><label>Langues</label><span>Français · Anglais</span></div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <section id="contact">
-        <h2>4. Contact</h2>
-        <p>N'hésitez pas à me contacter pour toute question.</p>
-    </section>
+<!-- PROJETS -->
+<section id="projects">
+  <div class="section-header reveal">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Mes <em>projets</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="projects-grid">
 
-    <footer>
-        <p>&copy; 2026 Eloi</p>
-    </footer>
+    <div class="project-card reveal" data-project="0">
+      <p class="project-num">001</p>
+      <h3 class="project-title">Audit énergétique — bâtiment tertiaire</h3>
+      <p class="project-desc">Réalisation d'un diagnostic complet de la performance énergétique d'un bâtiment tertiaire.</p>
+      <div class="project-tags"><span class="tag">Thermique</span><span class="tag">Audit</span><span class="tag">DPE</span></div>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.1s" data-project="1">
+      <p class="project-num">002</p>
+      <h3 class="project-title">Étude d'installation photovoltaïque</h3>
+      <p class="project-desc">Dimensionnement d'une installation solaire pour une maison individuelle.</p>
+      <div class="project-tags"><span class="tag">Solaire</span><span class="tag">ENR</span><span class="tag">Dimensionnement</span></div>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.05s" data-project="2">
+      <p class="project-num">003</p>
+      <h3 class="project-title">Plan de rénovation énergétique</h3>
+      <p class="project-desc">Élaboration d'un programme de rénovation pour un patrimoine bâti communal.</p>
+      <div class="project-tags"><span class="tag">Rénovation</span><span class="tag">Collectivité</span><span class="tag">ROI</span></div>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.15s" data-project="3">
+      <p class="project-num">004</p>
+      <h3 class="project-title">Veille réglementaire RE2020</h3>
+      <p class="project-desc">Synthèse et analyse des nouvelles exigences de la réglementation environnementale RE2020.</p>
+      <div class="project-tags"><span class="tag">RE2020</span><span class="tag">Réglementation</span><span class="tag">Veille</span></div>
+      <span class="project-arrow">→</span>
+    </div>
+
+    <div class="project-card reveal" style="transition-delay:0.25s" data-project="4">
+      <p class="project-num">005</p>
+      <h3 class="project-title">Rapport d'alternance — [à venir]</h3>
+      <p class="project-desc">Ce projet sera complété à l'issue de mon alternance.</p>
+      <div class="project-tags"><span class="tag">Alternance</span><span class="tag">Terrain</span></div>
+      <span class="project-arrow">→</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- COMPÉTENCES -->
+<section id="skills">
+  <div class="section-header reveal">
+    <span class="section-num">03</span>
+    <h2 class="section-title">Mes <em>compétences</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="skills-layout">
+    <div class="skill-group reveal">
+      <p class="skill-group-title">Technique</p>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">Thermique du bâtiment</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Audit énergétique</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Énergies renouvelables</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Réglementation RE2020</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+      </ul>
+    </div>
+    <div class="skill-group reveal" style="transition-delay:0.1s">
+      <p class="skill-group-title">Outils & logiciels</p>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">AutoCAD / SketchUp</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Microsoft Office</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Pleiades / Comfie</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">ClimaWin</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Canva / Présentation</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+      </ul>
+    </div>
+    <div class="skill-group reveal" style="transition-delay:0.2s">
+      <p class="skill-group-title">Savoir-être</p>
+      <ul class="skill-list">
+        <li class="skill-item"><span class="skill-name">Rigueur & méthode</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Esprit d'analyse</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Travail en équipe</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Curiosité intellectuelle</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div></li>
+        <li class="skill-item"><span class="skill-name">Adaptabilité</span><div class="skill-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-header reveal">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Me <em>contacter</em></h2>
+    <div class="divider"></div>
+  </div>
+  <div class="contact-layout">
+    <div>
+      <p class="contact-intro reveal">Vous avez un projet, une opportunité d'alternance ou simplement envie d'échanger ? N'hésitez pas à me laisser un message, je vous répondrai dans les plus brefs délais.</p>
+      <div class="contact-links reveal" style="transition-delay:0.1s">
+        <a href="mailto:eloi.domain@example.com" class="contact-link">
+          <div class="link-icon">@</div>
+          <div><div class="link-text">eloi.domain@example.com</div><div class="link-sub">E-mail</div></div>
+        </a>
+        <a href="https://linkedin.com" class="contact-link">
+          <div class="link-icon">in</div>
+          <div><div class="link-text">linkedin.com/in/eloi-domain</div><div class="link-sub">LinkedIn</div></div>
+        </a>
+        <a href="#" class="contact-link">
+          <div class="link-icon">CV</div>
+          <div><div class="link-text">Télécharger mon CV</div><div class="link-sub">PDF · mis à jour 2025</div></div>
+        </a>
+      </div>
+    </div>
+    <form class="contact-form reveal" style="transition-delay:0.15s" id="contactForm">
+      <div class="form-group"><label class="form-label">Nom</label><input type="text" class="form-input" placeholder="Votre nom" required></div>
+      <div class="form-group"><label class="form-label">E-mail</label><input type="email" class="form-input" placeholder="vous@example.com" required></div>
+      <div class="form-group"><label class="form-label">Sujet</label><input type="text" class="form-input" placeholder="Alternance, projet, autre…"></div>
+      <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" rows="4" placeholder="Votre message…" required></textarea></div>
+      <button type="submit" class="btn-send">Envoyer →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-left">© 2025 Eloi Domain — Tous droits réservés</span>
+  <span class="footer-right">BUT MT2E · Transition énergétique</span>
+</footer>
+
+<!-- PANNEAU DETAIL PROJET -->
+<div class="panel-overlay" id="overlay"></div>
+<div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Détail du projet">
+  <div class="panel-header">
+    <span class="panel-num" id="panel-num"></span>
+    <button class="panel-close" id="panel-close" aria-label="Fermer">✕</button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</div>
+
+<div class="toast" id="toast">Message envoyé !</div>
+
+<script>
+  const projects = [
+    {
+      num: '001',
+      title: 'Audit énergétique',
+      titleEm: 'bâtiment tertiaire',
+      tags: ['Thermique', 'Audit', 'DPE'],
+      contexte: "Dans le cadre de ma formation BUT MT2E, j'ai réalisé un audit énergétique complet d'un bâtiment tertiaire (bureaux, ~800 m²). L'objectif était d'évaluer la performance énergétique actuelle et de formuler des préconisations d'amélioration.",
+      demarche: "La démarche a compris : une visite de site et collecte des données (factures, plans, équipements), le calcul des consommations par usage (chauffage, ECS, éclairage), la réalisation d'un DPE simplifié, et la rédaction d'un rapport de préconisations hiérarchisées.",
+      resultats: "Identification de 3 gisements d'économies prioritaires représentant un potentiel de réduction des consommations de 25 à 35 %. Remise d'un rapport structuré avec estimations de retour sur investissement.",
+      meta: { 'Durée': '6 semaines', 'Contexte': 'Projet académique', 'Année': '2024', 'Outils': 'ClimaWin · Excel' }
+    },
+    {
+      num: '002',
+      title: 'Installation photovoltaïque',
+      titleEm: 'étude & dimensionnement',
+      tags: ['Solaire', 'ENR', 'Dimensionnement'],
+      contexte: "Étude complète pour l'installation d'un système photovoltaïque sur une maison individuelle en région Centre-Val de Loire. Le projet intégrait les contraintes architecturales, réglementaires et économiques du propriétaire.",
+      demarche: "Analyse de la toiture (orientation, inclinaison, masques), calcul du gisement solaire local, dimensionnement du nombre de panneaux et de l'onduleur, estimation de la productivité annuelle (kWh/kWc), étude de rentabilité avec et sans revente du surplus.",
+      resultats: "Proposition d'une installation de 6 kWc. Productivité estimée à 7 200 kWh/an. Retour sur investissement calculé à 11 ans avec autoconsommation partielle.",
+      meta: { 'Durée': '4 semaines', 'Contexte': 'Projet académique', 'Année': '2024', 'Outils': 'PVGis · Excel' }
+    },
+    {
+      num: '003',
+      title: 'Rénovation énergétique',
+      titleEm: 'patrimoine communal',
+      tags: ['Rénovation', 'Collectivité', 'ROI'],
+      contexte: "Élaboration d'un plan pluriannuel de rénovation énergétique pour un patrimoine bâti communal composé de 5 bâtiments (école, mairie, salle polyvalente). Mission réalisée dans le cadre d'un projet tutoré.",
+      demarche: "Inventaire et état des lieux des bâtiments, recueil des consommations sur 3 ans, priorisation des travaux selon un critère coût/économie, rédaction de fiches actions et estimation des aides mobilisables (CEE, DETR, DSIL).",
+      resultats: "Plan d'actions sur 5 ans priorisé et chiffré. Identification de 42 % d'économies potentielles sur la facture énergétique de la commune. Présentation au conseil municipal.",
+      meta: { 'Durée': '8 semaines', 'Contexte': 'Projet tutoré', 'Année': '2024', 'Outils': 'Excel · PowerPoint' }
+    },
+    {
+      num: '004',
+      title: 'Veille réglementaire',
+      titleEm: 'RE2020',
+      tags: ['RE2020', 'Réglementation', 'Veille'],
+      contexte: "Travail de veille et d'analyse sur la Réglementation Environnementale 2020 (RE2020), entrée en vigueur en janvier 2022 pour les logements neufs. Comparaison avec la RT2012 et analyse des impacts pour les professionnels du bâtiment.",
+      demarche: "Lecture et synthèse des textes officiels, identification des nouveaux indicateurs (Bbio, Cep, Cep,nr, IC énergie, IC construction), analyse comparative des exigences RT2012 / RE2020, interviews de deux professionnels du secteur.",
+      resultats: "Production d'un document de synthèse de 20 pages, d'une fiche mémo A3 destinée aux professionnels et d'une présentation orale de 15 minutes devant un jury.",
+      meta: { 'Durée': '5 semaines', 'Contexte': 'Projet académique', 'Année': '2023', 'Outils': 'Word · Canva' }
+    },
+    {
+      num: '005',
+      title: "Rapport d'alternance",
+      titleEm: 'à venir',
+      tags: ['Alternance', 'Terrain'],
+      contexte: "Ce projet sera complété à l'issue de mon alternance. Il regroupera les missions réalisées en entreprise, les compétences développées sur le terrain et une réflexion approfondie sur les enjeux rencontrés.",
+      demarche: "Le rapport suivra la méthodologie imposée par l'IUT : contextualisation de l'entreprise, description des missions, analyse critique et mise en perspective avec les apports de la formation.",
+      resultats: "Document en cours de construction. N'hésitez pas à me contacter pour échanger sur mes disponibilités et mes attentes.",
+      meta: { 'Durée': 'En cours', 'Contexte': 'Alternance', 'Année': '2025', 'Outils': '—' }
+    }
+  ];
+
+  const overlay   = document.getElementById('overlay');
+  const panel     = document.getElementById('panel');
+  const panelNum  = document.getElementById('panel-num');
+  const panelBody = document.getElementById('panel-body');
+  const btnClose  = document.getElementById('panel-close');
+
+  function openPanel(idx) {
+    const p = projects[idx];
+    panelNum.textContent = p.num;
+    panelBody.innerHTML = `
+      <h2 class="panel-title">${p.title} — <em>${p.titleEm}</em></h2>
+      <div class="panel-tags">${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+
+      <p class="panel-section-label">Contexte</p>
+      <p class="panel-text">${p.contexte}</p>
+
+      <p class="panel-section-label">Démarche</p>
+      <p class="panel-text">${p.demarche}</p>
+
+      <p class="panel-section-label">Informations</p>
+      <div class="panel-meta-grid">
+        ${Object.entries(p.meta).map(([k,v]) => `
+          <div class="panel-meta-item"><label>${k}</label><span>${v}</span></div>
+        `).join('')}
+      </div>
+
+      <p class="panel-section-label">Résultats</p>
+      <div class="panel-result-box"><p>${p.resultats}</p></div>
+    `;
+    overlay.classList.add('active');
+    panel.classList.add('active');
+    document.body.classList.add('panel-open');
+    panel.scrollTop = 0;
+  }
+
+  function closePanel() {
+    overlay.classList.remove('active');
+    panel.classList.remove('active');
+    document.body.classList.remove('panel-open');
+  }
+
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.addEventListener('click', () => openPanel(+card.dataset.project));
+  });
+
+  btnClose.addEventListener('click', closePanel);
+  overlay.addEventListener('click', closePanel);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+  /* reveal */
+  const revealEls = document.querySelectorAll('.reveal');
+  revealEls.forEach(el => el.classList.add('hidden'));
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.remove('hidden');
+        e.target.classList.add('visible');
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => obs.observe(el));
+
+  /* toast */
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+    this.reset();
+  });
+</script>
 </body>
 </html>
